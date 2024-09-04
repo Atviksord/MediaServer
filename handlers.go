@@ -18,7 +18,14 @@ func (cf *apiconfig) fileServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
+	// Fileserver Handler
+	fs := http.FileServer(http.Dir("./static"))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	mux.HandleFunc("GET /", cfg.fileServer)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "index.html")
+	})
+
+	//mux.HandleFunc("GET /", cfg.fileServer)
 
 }
