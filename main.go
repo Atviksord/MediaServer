@@ -23,7 +23,7 @@ func main() {
 	IP := os.Getenv("IP")
 	mux := http.NewServeMux()
 	server := &http.Server{
-		Addr:    IP + ":" + PORT,
+		Addr:    "0.0.0.0:" + PORT,
 		Handler: mux,
 	}
 	cfg.handlerRegistry(mux)
