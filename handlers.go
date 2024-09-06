@@ -1,25 +1,41 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 )
 
-func (cfg *apiconfig) loginServer(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiconfig) startingHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "text/html")
 
-	// Servel login if not API auth'd or JWT
+	// AUTH CHECK (check if already logged in)
+
+	// Serve Server login if not API auth'd or JWT
 	http.ServeFile(w, r, "./static/login.html")
-	// test
+
+}
+func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		err := r.ParseForm()
+		bodyBytes, err := io.ReadAll(r.Body)
 		if err != nil {
-			fmt.Println("Error biatch")
+			fmt.Printf("Error reading body %v", err)
+			return
+		}
+		r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		err = r.ParseForm()
+		if err != nil {
+			fmt.Printf("Error parsing form %v", err)
+			return
 		}
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		fmt.Println(username, password)
+		// Check DB for match, if match serve index. (make JWT etc for auth endpoints)
+		fmt.Printf("Username: %s Password: %s", username, password)
+		http.ServeFile(w, r, "index.html")
+
 	}
 
 }
@@ -34,8 +50,7 @@ func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// Send to loginpage/root check
-	mux.HandleFunc("/", cfg.loginServer)
-
-	//mux.HandleFunc("GET /", cfg.fileServer)
+	mux.HandleFunc("/", cfg.startingHandler)
+	mux.HandleFunc("POST /login", cfg.loginHandler)
 
 }

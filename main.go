@@ -7,10 +7,11 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 type apiconfig struct {
-	Database string
+	db *database.Queries
 }
 
 func main() {
