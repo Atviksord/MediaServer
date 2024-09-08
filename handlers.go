@@ -65,13 +65,12 @@ func (cfg *apiconfig) signupHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		// Check DB for match IF NOT EXIST create user in DB and automatically LOG IN (jwt creation, also hash password etc)
-		d, err := cfg.db.GetUser(r.Context(), username)
+		_, err = cfg.db.GetUser(r.Context(), username)
 		if err != nil {
-			fmt.Errorf("Error occured %v", err)
+			fmt.Printf("Error occured %v", err)
 			fmt.Println(password)
 			return
 		}
-		fmt.Println(d.Username)
 
 	}
 
