@@ -11,12 +11,12 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="/login" method="post">
+        <form>
             <input type="text" placeholder="Username" name="username" class="input-box" required>
             <input type="password" placeholder="Password" name="password" class="input-box" required>
             <div class="button-group">
-                <button type="submit" class="btn" formaction="/login">Login</button>
-                <button type="submit" class="btn signup" formaction="/signup">Sign Up</button>
+                <button type="submit" class="btn" formaction="/login" formmethod="post">Login</button>
+                <button type="submit" class="btn signup" formaction="/signup" formmethod="post">Sign Up</button>
             </div>
         </form>
     </div>
