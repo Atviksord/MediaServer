@@ -5,8 +5,41 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 )
+
+type Favourite struct {
+	ID      int32
+	UserID  int32
+	MediaID int32
+	AddedAt sql.NullTime
+}
+
+type Follow struct {
+	ID         int32
+	UserID     int32
+	MediaID    int32
+	FollowedAt sql.NullTime
+}
+
+type Medium struct {
+	ID          int32
+	MediaName   string
+	MediaType   string
+	FilePath    string
+	FileSize    sql.NullInt64
+	Duration    sql.NullInt32
+	Resolution  sql.NullString
+	Format      string
+	UploadDate  sql.NullTime
+	Thumbnail   sql.NullString
+	Tags        []string
+	Description sql.NullString
+	ViewCount   sql.NullInt32
+	Rating      sql.NullString
+	FollowID    sql.NullInt32
+}
 
 type User struct {
 	ID        int32
