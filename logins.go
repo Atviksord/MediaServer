@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"io"
 	"net/http"
+	"path/filepath"
 
 	"github.com/Atviksord/MediaServer/internal/database"
 )
@@ -34,8 +36,6 @@ func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, "./static/login.html")
 			return
 		}
-
-		http.ServeFile(w, r, "index.html")
 
 	}
 
