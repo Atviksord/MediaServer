@@ -1,6 +1,6 @@
 {{ range .Images }}
 <div class="media-item">
-    <img src="{{ .FilePath }}" alt="{{ .Title }}" />
+    <img src="/static/{{ .FilePath }}" alt="{{ .Title }}" style="width: 300px;" height="auto" />
     <p>{{ .Title }}</p>
 </div>
 {{ end }}
