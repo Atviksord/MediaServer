@@ -3,10 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"io"
 	"net/http"
-	"path/filepath"
 
 	"github.com/Atviksord/MediaServer/internal/database"
 )
