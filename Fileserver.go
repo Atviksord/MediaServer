@@ -31,6 +31,9 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request) {
 			{Title: "Picture 1", FilePath: "/Media/GOPHER.png"},
 			{Title: "Picture 2", FilePath: "/Media/logo.png"},
 			{Title: "Picture 3", FilePath: "/Media/primagen.jpg"}},
+		Videos: []MediaItem{
+			{Title: "Cool ducks running around", FilePath: "/Media/video1.mp4", Format: "mp4"},
+		},
 	}
 
 	// Execute the template with the data
