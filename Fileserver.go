@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 )
@@ -14,7 +15,7 @@ type MediaItem struct {
 // Dynamic Injection of Data function.
 func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request) {
 	// Parse the HTML templates
-	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html")
+	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html")
 	if err != nil {
 		http.Error(w, "Error loading template", http.StatusInternalServerError)
 		return
@@ -32,7 +33,7 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request) {
 			{Title: "Picture 2", FilePath: "/Media/logo.png"},
 			{Title: "Picture 3", FilePath: "/Media/primagen.jpg"}},
 		Videos: []MediaItem{
-			{Title: "Cool ducks running around", FilePath: "/Media/video1.mp4", Format: "mp4"},
+			{Title: "Cool ducks running around", FilePath: "/static/Media/video1.mp4", Format: "video/mp4"},
 		},
 	}
 
@@ -40,6 +41,7 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request) {
 	err = tmpl.Execute(w, datag)
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		fmt.Println(err)
 	}
 
 }
