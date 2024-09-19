@@ -42,9 +42,10 @@ type Medium struct {
 }
 
 type User struct {
-	ID        int32
-	Username  string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID           int32
+	Username     string
+	Password     string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	Refreshtoken sql.NullString
 }

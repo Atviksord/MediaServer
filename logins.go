@@ -2,6 +2,9 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
+	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -30,12 +33,31 @@ func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 			Username: username,
 			Password: password})
 		if err != nil {
-			fmt.Println("No such user")
+			fmt.Println("No such user or password")
 			http.ServeFile(w, r, "./static/login.html")
 			return
+		}
+		randomAccess, err := cfg.generateRandomToken()
+		if err != nil {
+			fmt.Println("Could not generate random token")
+		}
+		_, err = cfg.db.AddAccessToken(r.Context(), database.AddAccessTokenParams{
+			Username:     username,
+			Refreshtoken: sql.NullString{String: randomAccess, Valid: true}})
+		if err != nil {
+			fmt.Printf("Error generating random access token %v", err)
 		}
 		cfg.templateInjector(w, r)
 
 	}
 
+}
+
+func (cfg *apiconfig) generateRandomToken() (string, error) {
+	b := make([]byte, 15)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(b), nil
 }

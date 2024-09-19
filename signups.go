@@ -35,7 +35,6 @@ func (cfg *apiconfig) signupHandler(w http.ResponseWriter, r *http.Request) {
 				Password:  password,
 				CreatedAt: time.Now().UTC(),
 				UpdatedAt: time.Now().UTC()})
-			cfg.templateInjector(w, r)
 
 			fmt.Printf("User does not exist, creating new user %s with the password %s", username, password)
 			http.ServeFile(w, r, "./static/login.html")

@@ -10,7 +10,7 @@ import (
 )
 
 const login = `-- name: Login :one
-SELECT id, username, password, created_at, updated_at FROM users WHERE username = $1 AND password = $2
+SELECT id, username, password, created_at, updated_at, refreshtoken FROM users WHERE username = $1 AND password = $2
 `
 
 type LoginParams struct {
@@ -27,6 +27,7 @@ func (q *Queries) Login(ctx context.Context, arg LoginParams) (User, error) {
 		&i.Password,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Refreshtoken,
 	)
 	return i, err
 }
