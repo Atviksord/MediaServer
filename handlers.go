@@ -37,5 +37,6 @@ func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
 	mux.HandleFunc("/", cfg.startingHandler)
 	mux.HandleFunc("POST /login", cfg.loginHandler)
 	mux.HandleFunc("POST /signup", cfg.signupHandler)
+	mux.HandleFunc("POST /logout", cfg.logoutHandler)
 
 }

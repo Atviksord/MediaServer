@@ -61,3 +61,10 @@ func (cfg *apiconfig) generateRandomToken() (string, error) {
 	}
 	return base64.URLEncoding.EncodeToString(b), nil
 }
+
+func (cfg *apiconfig) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		fmt.Println("TEST TEST")
+	}
+
+}
