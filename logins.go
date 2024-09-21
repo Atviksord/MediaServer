@@ -37,16 +37,17 @@ func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, "./static/login.html")
 			return
 		}
-		randomAccess, err := cfg.generateRandomToken()
+		refreshToken, err := cfg.generateRandomToken()
 		if err != nil {
 			fmt.Println("Could not generate random token")
 		}
 		_, err = cfg.db.AddAccessToken(r.Context(), database.AddAccessTokenParams{
 			Username:     username,
-			Refreshtoken: sql.NullString{String: randomAccess, Valid: true}})
+			Refreshtoken: sql.NullString{String: refreshToken, Valid: true}})
 		if err != nil {
 			fmt.Printf("Error generating random access token %v", err)
 		}
+		cfg.cookieFactory(w, refreshToken)
 		cfg.templateInjector(w, r)
 
 	}
@@ -62,9 +63,24 @@ func (cfg *apiconfig) generateRandomToken() (string, error) {
 	return base64.URLEncoding.EncodeToString(b), nil
 }
 
-func (cfg *apiconfig) logoutHandler(w http.ResponseWriter, r *http.Request) {
+// Creates a cookie to store refreshtoken on login
+func (cfg *apiconfig) cookieFactory(w http.ResponseWriter, refreshToken string) {
+	cookie := &http.Cookie{
+		Name:     "refreshToken",
+		Value:    refreshToken,
+		HttpOnly: true,
+		Path:     "/",
+	}
+	http.SetCookie(w, cookie)
+	w.WriteHeader(http.StatusOK)
+	fmt.Println("Cookie made successfully")
+}
+
+func (cfg *apiconfig) logoutHandler(w http.ResponseWriter, r *http.Request, user database.User) {
 	if r.Method == "POST" {
-		fmt.Println("TEST TEST")
+		fmt.Println("user has logged out")
+		http.ServeFile(w, r, "./static/login.html")
+
 	}
 
 }

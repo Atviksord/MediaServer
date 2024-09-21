@@ -14,6 +14,9 @@ type UserInfo struct {
 	created_At time.Time
 }
 
+// CUSTOM TYPE FOR HANDLERS THAT REQUIRE AUTH
+type authedHandler func(http.ResponseWriter, *http.Request, database.User)
+
 func (cfg *apiconfig) startingHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "text/html")
 
@@ -24,8 +27,15 @@ func (cfg *apiconfig) startingHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (cfg *apiconfig) authWrapper(w http.ResponseWriter, r *http.Request, user database.User) {
+func (cfg *apiconfig) authWrapper(handler authedHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
+		// Get user from DB (check cookie for match)
+
+		// Pass control from AUTH middleware to main handler
+		handler(w, r, user)
+
+	}
 }
 
 func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
@@ -37,6 +47,6 @@ func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
 	mux.HandleFunc("/", cfg.startingHandler)
 	mux.HandleFunc("POST /login", cfg.loginHandler)
 	mux.HandleFunc("POST /signup", cfg.signupHandler)
-	mux.HandleFunc("POST /logout", cfg.logoutHandler)
+	mux.HandleFunc("POST /logout", cfg.authWrapper(cfg.logoutHandler))
 
 }
