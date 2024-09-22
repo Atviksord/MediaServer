@@ -78,7 +78,9 @@ func (cfg *apiconfig) cookieFactory(w http.ResponseWriter, refreshToken string) 
 
 func (cfg *apiconfig) logoutHandler(w http.ResponseWriter, r *http.Request, user database.User) {
 	if r.Method == "POST" {
-		fmt.Println("user has logged out")
+		cfg.db.DelAccessToken(r.Context(), user.Refreshtoken)
+		fmt.Printf("user has logged out %s", user.Username)
+
 		http.ServeFile(w, r, "./static/login.html")
 
 	}
