@@ -74,7 +74,8 @@ body {
     margin: 10px;
     border-radius: 5px;
     text-align: center;
-    flex: 1 1 200px;
+    height: 200px;
+    width: 200px;
     box-sizing: border-box;
     border-radius: 15px;
     border: 1px solid white;
