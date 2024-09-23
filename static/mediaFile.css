@@ -70,15 +70,28 @@ body {
 .media-item {
     background-color: #3a3a3a;
     color: #e0e0e0;
-    padding: 20px;
-    margin: 10px;
-    border-radius: 5px;
-    text-align: center;
     height: 200px;
     width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     box-sizing: border-box;
+    padding: 10px;
     border-radius: 15px;
     border: 1px solid white;
+    overflow: hidden;
+    /* Ensures media does not overflow the container */
+}
+
+/* Ensure media content (image/video) fits inside without stretching */
+.media-item img,
+.media-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Maintain aspect ratio and cover the container */
+    border-radius: 10px;
+    /* Optional: border-radius for media elements */
 }
 
 

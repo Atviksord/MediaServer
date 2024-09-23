@@ -29,7 +29,7 @@ func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		// Check DB for match, if match serve index. (make JWT etc for auth endpoints)
-		_, err = cfg.db.Login(r.Context(), database.LoginParams{
+		user, err := cfg.db.Login(r.Context(), database.LoginParams{
 			Username: username,
 			Password: password})
 		if err != nil {
@@ -48,7 +48,7 @@ func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Printf("Error generating random access token %v", err)
 		}
 		cfg.cookieFactory(w, refreshToken)
-		cfg.templateInjector(w, r)
+		cfg.templateInjector(w, r, user)
 
 	}
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/Atviksord/MediaServer/internal/database"
 )
 
 type MediaItem struct {
@@ -13,7 +15,7 @@ type MediaItem struct {
 }
 
 // Dynamic Injection of Data function.
-func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, user database.User) {
 	// Parse the HTML templates
 	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html")
 	if err != nil {

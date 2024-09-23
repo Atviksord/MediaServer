@@ -30,12 +30,12 @@ func (cfg *apiconfig) startingHandler(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		refreshToken := cookie.Value
-		_, err := cfg.db.GetUserByToken(r.Context(), sql.NullString{String: refreshToken, Valid: true})
+		user, err := cfg.db.GetUserByToken(r.Context(), sql.NullString{String: refreshToken, Valid: true})
 		if err != nil {
 			fmt.Println("Couldnt get user by token from main handler")
 
 		} else {
-			cfg.templateInjector(w, r)
+			cfg.templateInjector(w, r, user)
 			return
 		}
 
