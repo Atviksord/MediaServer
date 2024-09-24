@@ -70,8 +70,8 @@ body {
 .media-item {
     background-color: #3a3a3a;
     color: #e0e0e0;
-    height: 200px;
-    width: 200px;
+    height: 250px;
+    width: 250px;
     display: flex;
     justify-content: center;
     align-items: center;
