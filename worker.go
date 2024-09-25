@@ -8,6 +8,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
+// Directory watcher to watch changes in local files to upload to DB
 func directoryWatcherWorker(dirPath string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
