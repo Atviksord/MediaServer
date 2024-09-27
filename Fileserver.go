@@ -13,22 +13,31 @@ type MediaItem struct {
 	FilePath string
 	Format   string
 }
+type userInfo struct {
+	Username string
+}
+type PageData struct {
+	User   userInfo
+	Title  string
+	Videos []MediaItem
+	Images []MediaItem
+}
 
 // Dynamic Injection of Data function.
 func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, user database.User) {
 	// Parse the HTML templates
-	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html")
+	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html", "static/userDetailTemplate.html")
 	if err != nil {
 		http.Error(w, "Error loading template", http.StatusInternalServerError)
 		return
 	}
+
 	// Data to inject will be generated from SQL database entries in the future.
-	type data struct {
-		Title  string
-		Videos []MediaItem
-		Images []MediaItem
-	}
-	datag := data{
+
+	datag := PageData{
+		User: userInfo{
+			Username: user.Username,
+		},
 		Title: "Picture 1",
 		Images: []MediaItem{
 			{Title: "Picture 1", FilePath: "/Media/GOPHER.png"},
@@ -42,7 +51,7 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, u
 	// Execute the template with the data
 	err = tmpl.Execute(w, datag)
 	if err != nil {
-		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		http.Error(w, "Error rendering data template ddd", http.StatusInternalServerError)
 		fmt.Println(err)
 	}
 

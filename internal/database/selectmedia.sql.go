@@ -7,12 +7,10 @@ package database
 
 import (
 	"context"
-
-	"github.com/lib/pq"
 )
 
 const getMedia = `-- name: GetMedia :many
-SELECT media.id, media.media_name, media.media_type, media.file_path, media.file_size, media.duration, media.resolution, media.format, media.upload_date, media.thumbnail, media.tags, media.description, media.view_count, media.rating, media.follow_id
+SELECT media.id, media.media_name, media.media_type, media.file_path, media.format, media.upload_date, media.follow_id
 FROM media
 JOIN favourites ON media.id = favourites.media_id
 WHERE favourites.user_id = $1
@@ -32,16 +30,8 @@ func (q *Queries) GetMedia(ctx context.Context, userID int32) ([]Medium, error) 
 			&i.MediaName,
 			&i.MediaType,
 			&i.FilePath,
-			&i.FileSize,
-			&i.Duration,
-			&i.Resolution,
 			&i.Format,
 			&i.UploadDate,
-			&i.Thumbnail,
-			pq.Array(&i.Tags),
-			&i.Description,
-			&i.ViewCount,
-			&i.Rating,
 			&i.FollowID,
 		); err != nil {
 			return nil, err

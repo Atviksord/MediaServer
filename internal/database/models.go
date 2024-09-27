@@ -24,21 +24,13 @@ type Follow struct {
 }
 
 type Medium struct {
-	ID          int32
-	MediaName   string
-	MediaType   string
-	FilePath    string
-	FileSize    sql.NullInt64
-	Duration    sql.NullInt32
-	Resolution  sql.NullString
-	Format      string
-	UploadDate  sql.NullTime
-	Thumbnail   sql.NullString
-	Tags        []string
-	Description sql.NullString
-	ViewCount   sql.NullInt32
-	Rating      sql.NullString
-	FollowID    sql.NullInt32
+	ID         int32
+	MediaName  string
+	MediaType  string
+	FilePath   string
+	Format     string
+	UploadDate sql.NullTime
+	FollowID   sql.NullInt32
 }
 
 type User struct {

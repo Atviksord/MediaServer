@@ -30,7 +30,7 @@
 
 
     <footer class="footer">
-        <p>&copy; まだつくってない。</p>
+        {{template "userDetailTemplate.html" .}}
         <form action="/logout" method="post">
             <button class="footer-button" type="submit">ログアウト</button>
         </form>
