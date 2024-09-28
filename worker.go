@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
@@ -29,18 +31,36 @@ func directoryWatcherWorker(dirPath string) {
 			if !ok {
 				return
 			}
+
+			// Get file info
+			fileName := filepath.Base(event.Name)
+			filePath := event.Name
+			fileExt := filepath.Ext(event.Name)
+			fileType := "unknown"
+
+			// Determine the file type based on extension
+			switch strings.ToLower(fileExt) {
+			case ".jpg", ".jpeg", ".png", ".gif":
+				fileType = "image"
+			case ".mp4", ".avi", ".mov":
+				fileType = "video"
+			case ".mp3", ".wav":
+				fileType = "audio"
+
+			}
+
 			// Handle different types of events
 			if event.Op&fsnotify.Create == fsnotify.Create {
-				fmt.Printf("File %s was created at %s\n", event.Name, time.Now())
+				fmt.Printf("File created: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 			}
 			if event.Op&fsnotify.Remove == fsnotify.Remove {
-				fmt.Printf("File %s was deleted at %s\n", event.Name, time.Now())
+				fmt.Printf("File deleted: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 			}
 			if event.Op&fsnotify.Write == fsnotify.Write {
-				fmt.Printf("File %s was modified at %s\n", event.Name, time.Now())
+				fmt.Printf("File modified: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 			}
 			if event.Op&fsnotify.Rename == fsnotify.Rename {
-				fmt.Printf("File %s was renamed at %s\n", event.Name, time.Now())
+				fmt.Printf("File renamed: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 			}
 
 		case err, ok := <-watcher.Errors:
