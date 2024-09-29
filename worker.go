@@ -1,17 +1,21 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/Atviksord/MediaServer/internal/database"
 	"github.com/fsnotify/fsnotify"
 )
 
 // Directory watcher to watch changes in local files to upload to DB
-func directoryWatcherWorker(dirPath string) {
+func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -32,13 +36,11 @@ func directoryWatcherWorker(dirPath string) {
 				return
 			}
 
-			// Get file info
 			fileName := filepath.Base(event.Name)
 			filePath := event.Name
 			fileExt := filepath.Ext(event.Name)
 			fileType := "unknown"
 
-			// Determine the file type based on extension
 			switch strings.ToLower(fileExt) {
 			case ".jpg", ".jpeg", ".png", ".gif":
 				fileType = "image"
@@ -46,21 +48,33 @@ func directoryWatcherWorker(dirPath string) {
 				fileType = "video"
 			case ".mp3", ".wav":
 				fileType = "audio"
-
 			}
 
-			// Handle different types of events
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				fmt.Printf("File created: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
+				cfg.db.AddMedia(context.Background(), database.AddMediaParams{
+					MediaName:  fileName,
+					MediaType:  fileType,
+					FilePath:   filePath,
+					Format:     fileExt,
+					UploadDate: sql.NullTime{Time: time.Now().UTC(), Valid: true},
+				})
+
 			}
+			// delete media FROM DB if it detects it has been removed
 			if event.Op&fsnotify.Remove == fsnotify.Remove {
 				fmt.Printf("File deleted: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
+				cfg.db.DeleteMedia(context.Background())
 			}
-			if event.Op&fsnotify.Write == fsnotify.Write {
-				fmt.Printf("File modified: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
-			}
+
 			if event.Op&fsnotify.Rename == fsnotify.Rename {
-				fmt.Printf("File renamed: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
+				// Check if the file still exists
+				if _, err := os.Stat(event.Name); os.IsNotExist(err) {
+					// Treat as delete if the file does not exist
+					fmt.Printf("File deleted: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
+				} else {
+					fmt.Printf("File renamed: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
+				}
 			}
 
 		case err, ok := <-watcher.Errors:
