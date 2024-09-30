@@ -35,7 +35,7 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 			if !ok {
 				return
 			}
-
+			// Get info about the file, filepath, name, type extension and file type(video,image, etc)
 			fileName := filepath.Base(event.Name)
 			filePath := event.Name
 			fileExt := filepath.Ext(event.Name)
@@ -52,19 +52,26 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				fmt.Printf("File created: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
-				cfg.db.AddMedia(context.Background(), database.AddMediaParams{
+				_, err := cfg.db.AddMedia(context.Background(), database.AddMediaParams{
 					MediaName:  fileName,
 					MediaType:  fileType,
 					FilePath:   filePath,
 					Format:     fileExt,
 					UploadDate: sql.NullTime{Time: time.Now().UTC(), Valid: true},
 				})
+				if err != nil {
+					fmt.Println(err)
+				}
 
 			}
 			// delete media FROM DB if it detects it has been removed
 			if event.Op&fsnotify.Remove == fsnotify.Remove {
 				fmt.Printf("File deleted: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
-				cfg.db.DeleteMedia(context.Background())
+				_, err := cfg.db.DeleteMedia(context.Background(), filePath)
+				fmt.Println(filePath)
+				if err != nil {
+					fmt.Println("Error removing from DB", err)
+				}
 			}
 
 			if event.Op&fsnotify.Rename == fsnotify.Rename {
@@ -72,6 +79,12 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 				if _, err := os.Stat(event.Name); os.IsNotExist(err) {
 					// Treat as delete if the file does not exist
 					fmt.Printf("File deleted: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
+					_, err := cfg.db.DeleteMedia(context.Background(), filePath)
+					fmt.Println(filePath)
+					if err != nil {
+						fmt.Println("Error removing from DB", err)
+					}
+
 				} else {
 					fmt.Printf("File renamed: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 				}

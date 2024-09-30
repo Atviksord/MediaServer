@@ -11,12 +11,12 @@ import (
 
 const deleteMedia = `-- name: DeleteMedia :one
 DELETE FROM media
-WHERE id = $1
+WHERE file_path = $1
 RETURNING id, media_name, media_type, file_path, format, upload_date, follow_id
 `
 
-func (q *Queries) DeleteMedia(ctx context.Context, id int32) (Medium, error) {
-	row := q.db.QueryRowContext(ctx, deleteMedia, id)
+func (q *Queries) DeleteMedia(ctx context.Context, filePath string) (Medium, error) {
+	row := q.db.QueryRowContext(ctx, deleteMedia, filePath)
 	var i Medium
 	err := row.Scan(
 		&i.ID,

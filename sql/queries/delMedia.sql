@@ -1,4 +1,4 @@
 -- name: DeleteMedia :one
 DELETE FROM media
-WHERE id = $1
+WHERE file_path = $1
 RETURNING *;
