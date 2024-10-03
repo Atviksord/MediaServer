@@ -39,22 +39,7 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, u
 	if err != nil {
 		fmt.Printf("Error getting Media data from SQL db %v", err)
 	}
-	// Data to inject will be generated from SQL database entries in the future.
 
-	/*datag := PageData{
-		User: userInfo{
-			Username: user.Username,
-		},
-		Title: "Picture 1",
-		Images: []MediaItem{
-			{Title: "Picture 1", FilePath: "/Media/GOPHER.png"},
-			{Title: "Picture 2", FilePath: "/Media/logo.png"},
-			{Title: "Picture 3", FilePath: "/Media/primagen.jpg"}},
-		Videos: []MediaItem{
-			{Title: "Cool ducks running around", FilePath: "/static/Media/video1.mp4", Format: "video/mp4"},
-		},
-	}
-	*/
 	// Execute the template with the data
 	err = tmpl.Execute(w, datag)
 	if err != nil {
