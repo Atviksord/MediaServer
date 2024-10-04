@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -45,6 +48,30 @@ func (cfg *apiconfig) startingHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./static/login.html")
 
 }
+func (cfg *apiconfig) searchHandler(w http.ResponseWriter, r *http.Request, user database.User) {
+	// Get from post request the search term, then run a SQL search query using that keyword and serve only files that have that search term in the title
+	if r.Method == "POST" {
+		bodyBytes, err := io.ReadAll(r.Body)
+		if err != nil {
+			fmt.Printf("Error reading body %v", err)
+			return
+		}
+		r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		err = r.ParseForm()
+		if err != nil {
+			fmt.Printf("Error parsing form %v", err)
+			return
+		}
+		searchTerm := r.FormValue("searchContent")
+
+		cfg.db.GetSearchedMedia(context.Background(), sql.NullString{String: searchTerm, Valid: true})
+		// Get value from search and inject the correct files
+
+		cfg.templateInjector(w, r, user)
+
+	}
+
+}
 
 func (cfg *apiconfig) authWrapper(handler authedHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -79,5 +106,6 @@ func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
 	mux.HandleFunc("POST /login", cfg.loginHandler)
 	mux.HandleFunc("POST /signup", cfg.signupHandler)
 	mux.HandleFunc("POST /logout", cfg.authWrapper(cfg.logoutHandler))
+	mux.HandleFunc("POST /search", cfg.authWrapper(cfg.searchHandler))
 
 }

@@ -11,8 +11,10 @@
 <body>
     <header class="header-bar">
         <div class="header-content">
-            <button class="header-button">実行</button>
-            <input type="text" class="search-box" placeholder="けんさく。。。">
+            <form>
+                <button class="header-button" type="submit" formaction="/search" formmethod="post">実行</button>
+                <input type="text" class="search-box" placeholder="けんさく。。。" name="searchContent">
+            </form>
         </div>
     </header>
 
