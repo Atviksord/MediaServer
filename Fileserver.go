@@ -33,9 +33,9 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, u
 		http.Error(w, "Error loading template", http.StatusInternalServerError)
 		return
 	}
-	// SQL get media from DB (NOT FULLY TESTED)
+	// SQL get media from DB
 	datag, err := cfg.sqlMediaGetter(user)
-	fmt.Println(datag)
+
 	if err != nil {
 		fmt.Printf("Error getting Media data from SQL db %v", err)
 	}
@@ -49,14 +49,25 @@ func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, u
 
 }
 
+// Gets all media with SQL query
 func (cfg *apiconfig) sqlMediaGetter(user database.User) (PageData, error) {
-	// Will make a custom page for favourited/followed videos.
+
 	allMedia, err := cfg.db.GetAllMedia(context.Background())
 	if err != nil {
 		fmt.Println("Couldnt get media data from database")
 	}
+	trueData, err := cfg.pageDataArranger(allMedia, user)
+	if err != nil {
+		fmt.Println("Couldnt get truedata from pageDataArranger")
+	}
+
+	return trueData, nil
+
+}
+
+// Arranges a media slice from SQL queries into PageData structs
+func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database.User) (PageData, error) {
 	trueData := PageData{}
-	fmt.Println(allMedia[0].Format)
 
 	for _, datapoint := range allMedia {
 
@@ -74,5 +85,10 @@ func (cfg *apiconfig) sqlMediaGetter(user database.User) (PageData, error) {
 
 	}
 	return trueData, nil
+
+}
+
+// injects the searched dataset ONLY into the html, example: searched for "abcd", only injects those files that filenames have "abc"
+func (cfg *apiconfig) searchedTemplateInjector(w http.ResponseWriter, r *http.Request, user database.User, trueData PageData) {
 
 }

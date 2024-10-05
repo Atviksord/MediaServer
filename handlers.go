@@ -63,11 +63,20 @@ func (cfg *apiconfig) searchHandler(w http.ResponseWriter, r *http.Request, user
 			return
 		}
 		searchTerm := r.FormValue("searchContent")
+		// sql query to get searched files
+		searchedFiles, err := cfg.db.GetSearchedMedia(context.Background(), sql.NullString{String: searchTerm, Valid: true})
+		if err != nil {
+			fmt.Println("Couldnt get searched results from DB")
+		}
+		// gets PageData to inject
+		trueData, err := cfg.pageDataArranger(searchedFiles, user)
+		if err != nil {
+			fmt.Println("Couldnt get searchedfile data from pageDataArranger")
 
-		cfg.db.GetSearchedMedia(context.Background(), sql.NullString{String: searchTerm, Valid: true})
+		}
 		// Get value from search and inject the correct files
 
-		cfg.templateInjector(w, r, user)
+		cfg.searchedTemplateInjector(w, r, user, trueData)
 
 	}
 
