@@ -90,5 +90,17 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 
 // injects the searched dataset ONLY into the html, example: searched for "abcd", only injects those files that filenames have "abc"
 func (cfg *apiconfig) searchedTemplateInjector(w http.ResponseWriter, r *http.Request, user database.User, trueData PageData) {
+	// Parse the HTML templates
+	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html", "static/userDetailTemplate.html")
+	if err != nil {
+		http.Error(w, "Error loading template", http.StatusInternalServerError)
+		return
+	}
+	// Execute the template with the data
+	err = tmpl.Execute(w, trueData)
+	if err != nil {
+		http.Error(w, "Error rendering data template ddd", http.StatusInternalServerError)
+		fmt.Println(err)
+	}
 
 }
