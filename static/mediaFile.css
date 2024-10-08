@@ -1,15 +1,18 @@
 /* Ensure both images and videos have the same height */
 .media-item img,
 .media-item video {
+
     width: 100%;
     height: 400px;
     /* Consistent height for both images and videos */
     object-fit: cover;
     /* Make sure content covers the container */
-    border-radius: 10px;
+
     display: block;
     margin-bottom: 10px;
+    flex-grow: 1;
 }
+
 
 /* Fullscreen mode styling */
 .media-item video:fullscreen {
@@ -79,12 +82,12 @@ body {
 
 .media {
     width: 100%;
-    max-width: 1200px;
+    max-width: 2200px;
     min-height: 300px;
-    border: 2px solid white;
+
     border-radius: 15px;
     margin: 20px auto;
-    background-color: #2a2a2a;
+    background-color: #121212;
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
@@ -92,10 +95,10 @@ body {
 }
 
 .media-item {
-    background-color: #3a3a3a;
+    background-color: #121212;
     color: #e0e0e0;
     height: auto;
-    width: 400px;
+    width: 300px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -103,7 +106,7 @@ body {
     box-sizing: border-box;
     padding: 10px;
     border-radius: 15px;
-    border: 1px solid white;
+
 }
 
 /* Ensures the <p> tag appears below the media */

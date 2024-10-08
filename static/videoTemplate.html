@@ -1,6 +1,6 @@
 {{ range .Videos }}
 <div class="media-item">
-    <video controls style="width: 250px;" height="250px">
+    <video controls>
         <source src="/static/{{ .FilePath }}" type="video/{{ .Format }}">
     </video>
     <p>{{ .Title}}</p>
