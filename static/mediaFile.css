@@ -1,3 +1,27 @@
+/* Ensure both images and videos have the same height */
+.media-item img,
+.media-item video {
+    width: 100%;
+    height: 400px;
+    /* Consistent height for both images and videos */
+    object-fit: cover;
+    /* Make sure content covers the container */
+    border-radius: 10px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Fullscreen mode styling */
+.media-item video:fullscreen {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Make sure the video fits without cutting */
+    border-radius: 0;
+    /* Remove border-radius for fullscreen */
+}
+
+
 /* General Styles */
 body {
     margin: 0;
@@ -50,6 +74,7 @@ body {
 .content {
     padding: 20px;
     text-align: center;
+    margin-bottom: 160px;
 }
 
 .media {
@@ -64,46 +89,31 @@ body {
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: flex-start;
-
 }
 
 .media-item {
     background-color: #3a3a3a;
     color: #e0e0e0;
-    height: 300px;
-    width: 250px;
+    height: auto;
+    width: 400px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* Align items at the top */
     align-items: center;
     box-sizing: border-box;
     padding: 10px;
     border-radius: 15px;
     border: 1px solid white;
-    overflow: hidden;
-}
-
-.media-item img,
-.media-item video {
-    width: 100%;
-    height: auto;
-    /* Ensure the media adapts to the container */
-    object-fit: cover;
-    border-radius: 10px;
-    flex-grow: 1;
-    /* Make the media element grow to fill available space */
 }
 
 /* Ensures the <p> tag appears below the media */
 .media-item p {
     margin-top: 10px;
-    /* Adds some space between media and text */
     text-align: center;
+    font-size: 16px;
+    color: #e0e0e0;
     flex-shrink: 0;
-    /* Prevent the text from shrinking */
 }
-
 
 /* Footer */
 .footer {
@@ -115,6 +125,7 @@ body {
     bottom: 0;
     left: 0;
     box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.5);
+
 }
 
 .footer-button {

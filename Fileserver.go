@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/Atviksord/MediaServer/internal/database"
@@ -74,12 +75,18 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 		trueData.User.Username = user.Username
 
 		if datapoint.MediaType == "video" {
-			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: datapoint.FilePath, Format: datapoint.Format})
+
+			videoPath := strings.TrimPrefix(datapoint.FilePath, "static")
+			encodedPath := url.PathEscape(videoPath)
+
+			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, ".")})
 
 		}
 		if datapoint.MediaType == "image" {
+
 			imagePath := strings.TrimPrefix(datapoint.FilePath, "static")
-			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: imagePath})
+			encodedPath := url.PathEscape(imagePath)
+			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath})
 
 		}
 
