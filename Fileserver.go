@@ -29,7 +29,7 @@ type PageData struct {
 // Dynamic Injection of Data function.
 func (cfg *apiconfig) templateInjector(w http.ResponseWriter, r *http.Request, user database.User) {
 	// Parse the HTML templates
-	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html", "static/userDetailTemplate.html")
+	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html", "static/userDetailTemplate.html", "static/audioTemplate.html")
 	if err != nil {
 		http.Error(w, "Error loading template", http.StatusInternalServerError)
 		return
@@ -87,6 +87,13 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 			imagePath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(imagePath)
 			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath})
+
+		}
+		if datapoint.MediaType == "audio" {
+			audioPath := strings.TrimPrefix(datapoint.FilePath, "static")
+			encodedPath := url.PathEscape(audioPath)
+
+			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, ".")})
 
 		}
 

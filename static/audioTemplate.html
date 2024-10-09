@@ -1,0 +1,8 @@
+{{ range .Audios }}
+<div class="media-item">
+    <audio controls>
+        <source src="/static/{{ .FilePath }}" type="audio/{{ .Format }}">
+    </audio>
+    <p>{{ .Title }}</p>
+</div>
+{{ end }}
