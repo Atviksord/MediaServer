@@ -68,6 +68,7 @@ func (cfg *apiconfig) searchHandler(w http.ResponseWriter, r *http.Request, user
 		if err != nil {
 			fmt.Println("Couldnt get searched results from DB")
 		}
+
 		// gets PageData to inject
 		trueData, err := cfg.pageDataArranger(searchedFiles, user)
 		if err != nil {

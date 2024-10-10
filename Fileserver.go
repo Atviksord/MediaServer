@@ -24,6 +24,7 @@ type PageData struct {
 	Title  string
 	Videos []MediaItem
 	Images []MediaItem
+	Audios []MediaItem
 }
 
 // Dynamic Injection of Data function.
@@ -90,10 +91,11 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 
 		}
 		if datapoint.MediaType == "audio" {
+
 			audioPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(audioPath)
 
-			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, ".")})
+			trueData.Audios = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, ".")})
 
 		}
 
@@ -105,11 +107,12 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 // injects the searched dataset ONLY into the html, example: searched for "abcd", only injects those files that filenames have "abc"
 func (cfg *apiconfig) searchedTemplateInjector(w http.ResponseWriter, r *http.Request, user database.User, trueData PageData) {
 	// Parse the HTML templates
-	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html", "static/userDetailTemplate.html")
+	tmpl, err := template.ParseFiles("index.html", "static/imageTemplate.html", "static/videoTemplate.html", "static/userDetailTemplate.html", "static/audioTemplate.html")
 	if err != nil {
 		http.Error(w, "Error loading template", http.StatusInternalServerError)
 		return
 	}
+
 	// Execute the template with the data
 	err = tmpl.Execute(w, trueData)
 	if err != nil {
