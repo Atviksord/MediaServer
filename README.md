@@ -22,3 +22,17 @@ The server will automatically run on your localhost:8080
 - search button is case sensitive and will show anything that has any part of the search term: e.g "terst" will find any Interstellar files.
 
 ----------------------------------------------
+
+## Setting up the project
+
+1. Clone the repository.
+2. Create a new `.env` file by copying `.env.example`:
+   ```bash
+   cp .env.example .env
+   Fill in the appropriate values (DB credentials, etc.)
+
+3. Create the Database
+createdb -U <user> <database_name>
+
+4. navigate to the sql/schema folder and run Goose migration
+with goose "(yourDBconnectionstring)" up
