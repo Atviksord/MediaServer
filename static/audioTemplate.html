@@ -4,5 +4,11 @@
         <source src="/static/{{ .FilePath }}" type="audio/{{ .Format }}">
     </audio>
     <p>{{ .Title }}</p>
+    <div class="heart-checkbox">
+        <input type="checkbox" id="{{.ID }}" />
+        <label for="favourite">
+            <img src="/static/heart-empty.svg" class="heart" alt="Favourite" />
+    </div>
+
 </div>
 {{ end }}

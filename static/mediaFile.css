@@ -84,6 +84,8 @@ body {
     width: 100%;
     max-width: 2200px;
     min-height: 300px;
+    border: 1px solid white;
+
 
     border-radius: 15px;
     margin: 20px auto;
@@ -93,6 +95,33 @@ body {
     align-items: flex-start;
     justify-content: flex-start;
 }
+
+.content form {
+    display: flex;
+    justify-content: center;
+    /* Center the buttons horizontally */
+    margin: 20px 0;
+    /* Add space above and below the buttons */
+}
+
+.content form button {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: none;
+    padding: 15px 30px;
+    margin: 0 20px;
+    /* Space between buttons */
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 18px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.content form button:hover {
+    background-color: #575757;
+}
+
+
 
 .media-item {
     background-color: #121212;
@@ -144,4 +173,30 @@ body {
 
 .footer-button:hover {
     background-color: #575757;
+}
+
+/* Hide the default checkbox */
+.heart-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+/* Heart styles */
+.heart-checkbox .heart {
+    display: inline-block;
+    width: 24px;
+    /* Adjust the size as needed */
+    height: 24px;
+    cursor: pointer;
+    background-image: url('heart-empty.svg');
+    /* Default empty heart */
+    background-size: cover;
+    /* Ensure the SVG fills the span */
+    transition: background-image 0.3s ease;
+    /* Smooth transition for image change */
+}
+
+/* Change the heart when checked */
+.heart-checkbox input[type="checkbox"]:checked+label .heart {
+    background-image: url('/static/heart-full.svg');
+    /* Change to filled heart */
 }

@@ -4,6 +4,14 @@
         <source src="/static/{{ .FilePath }}" type="video/{{ .Format }}">
     </video>
     <p>{{ .Title}}</p>
+    <div class="heart-checkbox">
+        <input type="checkbox" id="{{ .ID }}" />
+        <label for="favourite">
+            <span class="heart heart-empty"></span>
+        </label>
+    </div>
+
+
 
 </div>
 {{ end }}

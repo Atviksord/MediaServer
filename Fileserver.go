@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -15,6 +16,7 @@ type MediaItem struct {
 	Title    string
 	FilePath string
 	Format   string
+	ID       int
 }
 type userInfo struct {
 	Username string
@@ -79,23 +81,26 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 
 			videoPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(videoPath)
+			randN := rand.Intn(1000000)
 
-			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, ".")})
+			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: randN})
 
 		}
 		if datapoint.MediaType == "image" {
+			randN := rand.Intn(1000000)
 
 			imagePath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(imagePath)
-			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath})
+			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, ID: randN})
 
 		}
 		if datapoint.MediaType == "audio" {
+			randN := rand.Intn(1000000)
 
 			audioPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(audioPath)
 
-			trueData.Audios = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, ".")})
+			trueData.Audios = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: randN})
 
 		}
 

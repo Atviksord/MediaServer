@@ -21,6 +21,10 @@
     <div class="content">
         <h1>チグサフリックすへようこうそ</h1>
         <p>動画を選びなさい！.</p>
+        <form>
+            <button type="submit" formaction="/" formmethod="post">MAIN</button>
+            <button type="submit" form="/Favourites" formmethod="post">Favourites</button>
+        </form>
         <div class="media">
             {{ template "imageTemplate.html" . }}
             {{ template "videoTemplate.html" . }}
