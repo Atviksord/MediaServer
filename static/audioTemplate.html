@@ -4,11 +4,21 @@
         <source src="/static/{{ .FilePath }}" type="audio/{{ .Format }}">
     </audio>
     <p>{{ .Title }}</p>
-    <div class="heart-checkbox">
-        <input type="checkbox" id="{{.ID }}" />
-        <label for="favourite">
-            <img src="/static/heart-empty.svg" class="heart" alt="Favourite" />
-    </div>
 
+    <!-- Form for liking or disliking -->
+    <form action="/togglefavourite" method="POST">
+        <div class="heart-checkbox">
+            <!-- Hidden field for false state -->
+            <input type="hidden" name="favourite" value="false" />
+            <!-- Checkbox toggles between liked and unliked -->
+            <input type="checkbox" id="heart-{{ .ID }}" name="favourite" value="true" {{ if .IsFavourite }}checked{{ end
+                }} onchange="this.form.submit()" />
+            <label for="heart-{{ .ID }}">
+                <img src="/static/{{ if .IsFavourite }}heart-filled.svg{{ else }}heart-empty.svg{{ end }}" class="heart"
+                    alt="Favourite" />
+            </label>
+            <input type="hidden" name="mediaID" value="{{ .ID }}">
+        </div>
+    </form>
 </div>
 {{ end }}

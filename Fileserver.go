@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,10 +12,11 @@ import (
 )
 
 type MediaItem struct {
-	Title    string
-	FilePath string
-	Format   string
-	ID       int
+	Title       string
+	FilePath    string
+	Format      string
+	ID          int
+	IsFavourite bool
 }
 type userInfo struct {
 	Username string
@@ -78,29 +78,46 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 		trueData.User.Username = user.Username
 
 		if datapoint.MediaType == "video" {
+			favourite := false
 
 			videoPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(videoPath)
-			randN := rand.Intn(1000000)
+			// SQL query to check if following media
+			d, err := cfg.db.GetFavouritedMedia(context.Background(), database.GetFavouritedMediaParams{UserID: user.ID, MediaID: datapoint.ID})
+			if err != nil {
+				fmt.Println("Error receiving favourited media")
+			}
+			if d == 1 {
+				favourite = true
 
-			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: randN})
+			}
+
+			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: int(datapoint.ID), IsFavourite: favourite})
 
 		}
 		if datapoint.MediaType == "image" {
-			randN := rand.Intn(1000000)
 
 			imagePath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(imagePath)
-			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, ID: randN})
+			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, ID: int(datapoint.ID)})
 
 		}
 		if datapoint.MediaType == "audio" {
-			randN := rand.Intn(1000000)
+			favourite := false
+			// SQL query to check if following media
+			d, err := cfg.db.GetFavouritedMedia(context.Background(), database.GetFavouritedMediaParams{UserID: user.ID, MediaID: datapoint.ID})
+			if err != nil {
+				fmt.Println("Error receiving favourited media")
+			}
+			if d == 1 {
+				favourite = true
+
+			}
 
 			audioPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(audioPath)
 
-			trueData.Audios = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: randN})
+			trueData.Audios = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: int(datapoint.ID), IsFavourite: favourite})
 
 		}
 

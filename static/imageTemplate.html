@@ -2,6 +2,11 @@
 <div class="media-item">
     <img src="/static/{{ .FilePath }}" alt="{{ .Title }}" />
     <p>{{ .Title}}</p>
+    <div class="heart-checkbox">
+        <input type="checkbox" id="{{.ID }}" />
+        <label for="{{ .ID }}">
+            <img src="/static/heart-empty.svg" class="heart" alt="Favourite" />
+    </div>
 
 </div>
 {{ end }}

@@ -175,28 +175,20 @@ body {
     background-color: #575757;
 }
 
-/* Hide the default checkbox */
 .heart-checkbox input[type="checkbox"] {
     display: none;
 }
 
-/* Heart styles */
-.heart-checkbox .heart {
+.heart-checkbox label .heart {
     display: inline-block;
     width: 24px;
-    /* Adjust the size as needed */
     height: 24px;
     cursor: pointer;
-    background-image: url('heart-empty.svg');
-    /* Default empty heart */
+    background-image: url('/static/heart-empty.svg');
     background-size: cover;
-    /* Ensure the SVG fills the span */
     transition: background-image 0.3s ease;
-    /* Smooth transition for image change */
 }
 
-/* Change the heart when checked */
 .heart-checkbox input[type="checkbox"]:checked+label .heart {
     background-image: url('/static/heart-full.svg');
-    /* Change to filled heart */
 }
