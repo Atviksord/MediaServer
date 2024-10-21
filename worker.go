@@ -50,7 +50,7 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 				fileType = "audio"
 			}
 
-			if event.Op&fsnotify.Create == fsnotify.Create {
+			if event.Op&fsnotify.Create == fsnotify.Create && fileType != "unknown" {
 				fmt.Printf("File created: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 				_, err := cfg.db.AddMedia(context.Background(), database.AddMediaParams{
 					MediaName:  fileName,
@@ -65,7 +65,7 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 
 			}
 			// delete media FROM DB if it detects it has been removed
-			if event.Op&fsnotify.Remove == fsnotify.Remove {
+			if event.Op&fsnotify.Remove == fsnotify.Remove && fileType != "unknown" {
 				fmt.Printf("File deleted: Name: %s, Path: %s, Type: %s, Format: %s at %s\n", fileName, filePath, fileType, fileExt, time.Now())
 				_, err := cfg.db.DeleteMedia(context.Background(), filePath)
 				fmt.Println(filePath)
@@ -74,7 +74,7 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 				}
 			}
 
-			if event.Op&fsnotify.Rename == fsnotify.Rename {
+			if event.Op&fsnotify.Rename == fsnotify.Rename && fileType != "unknown" {
 				// Check if the file still exists
 				if _, err := os.Stat(event.Name); os.IsNotExist(err) {
 					// Treat as delete if the file does not exist

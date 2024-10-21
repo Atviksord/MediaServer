@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Atviksord/MediaServer/internal/database"
 )
@@ -11,13 +12,29 @@ func (cfg *apiconfig) togglefavourite(w http.ResponseWriter, r *http.Request, us
 	fmt.Println("GOES INTO TOGGLE MODE")
 	if r.Method == "POST" {
 		fmt.Println("LIKED")
-		mediaID := r.FormValue("mediaID")
+		StringMediaID := r.FormValue("mediaID")
 		favourite := r.FormValue("favourite")
-		fmt.Println(mediaID)
+		fmt.Println(StringMediaID)
+		mediaID, err := strconv.Atoi(StringMediaID)
+		if err != nil {
+			fmt.Println("Failed to convert stringMediaID into MediaIT (integer)")
+		}
 		fmt.Println(favourite)
 		fmt.Println(user.Username)
+		if favourite == "false" {
+			fmt.Println("Generating a new favourite")
+			_, err := cfg.db.AddFavourite(r.Context(), database.AddFavouriteParams{UserID: user.ID, MediaID: int32(mediaID)})
+			if err != nil {
+				fmt.Println("Unable to add favourite", err)
+			}
+
+		} else {
+			fmt.Println("Removing a favourite")
+			_, err := cfg.db.DeleteFavourite(r.Context(), database.DeleteFavouriteParams{UserID: user.ID, MediaID: int32(mediaID)})
+			if err != nil {
+				fmt.Println("Unable to remove favourite", err)
+			}
+		}
 
 	}
-
-	return
 }
