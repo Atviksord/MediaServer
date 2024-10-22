@@ -138,7 +138,7 @@ func (cfg *apiconfig) searchedTemplateInjector(w http.ResponseWriter, r *http.Re
 	// Execute the template with the data
 	err = tmpl.Execute(w, trueData)
 	if err != nil {
-		http.Error(w, "Error rendering data template ddd", http.StatusInternalServerError)
+		http.Error(w, "Error rendering data template", http.StatusInternalServerError)
 		fmt.Println(err)
 	}
 

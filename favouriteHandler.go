@@ -35,6 +35,8 @@ func (cfg *apiconfig) togglefavourite(w http.ResponseWriter, r *http.Request, us
 				fmt.Println("Unable to remove favourite", err)
 			}
 		}
+		// RESERVE POINT
+		cfg.templateInjector(w, r, user)
 
 	}
 }
