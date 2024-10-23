@@ -37,6 +37,7 @@ func (cfg *apiconfig) togglefavourite(w http.ResponseWriter, r *http.Request, us
 		}
 		// RESERVE POINT
 		cfg.templateInjector(w, r, user)
+		// Need to fix bug, make sure the unfilled heart disappears on toggle.
 
 	}
 }
