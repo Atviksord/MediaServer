@@ -8,6 +8,7 @@ import (
 	"github.com/Atviksord/MediaServer/internal/database"
 )
 
+// Is not properly toggling between false and true values from template
 func (cfg *apiconfig) togglefavourite(w http.ResponseWriter, r *http.Request, user database.User) {
 	fmt.Println("GOES INTO TOGGLE MODE")
 	if r.Method == "POST" {
@@ -20,7 +21,7 @@ func (cfg *apiconfig) togglefavourite(w http.ResponseWriter, r *http.Request, us
 			fmt.Println("Failed to convert stringMediaID into MediaIT (integer)")
 		}
 		fmt.Println(favourite)
-		fmt.Println(user.Username)
+
 		if favourite == "false" {
 			fmt.Println("Generating a new favourite")
 			_, err := cfg.db.AddFavourite(r.Context(), database.AddFavouriteParams{UserID: user.ID, MediaID: int32(mediaID)})

@@ -14,7 +14,7 @@
             <input type="checkbox" id="heart-{{ .ID }}" name="favourite" value="true" {{ if .IsFavourite }}checked{{ end
                 }} onchange="this.form.submit()" />
             <label for="heart-{{ .ID }}">
-                <img src="/static/{{ if .IsFavourite }}heart-filled.svg{{ else }}heart-empty.svg{{ end }}" class="heart"
+                <img src="/static/{{ if .IsFavourite }}heart-full.svg{{ else }}heart-empty.svg{{ end }}" class="heart"
                     alt="Favourite" />
             </label>
             <input type="hidden" name="mediaID" value="{{ .ID }}">
