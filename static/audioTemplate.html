@@ -8,8 +8,6 @@
     <!-- Form for liking or disliking -->
     <form action="/togglefavourite" method="POST">
         <div class="heart-checkbox">
-            <!-- Hidden field for false state -->
-            <input type="hidden" name="favourite" value="false" />
             <!-- Checkbox toggles between liked and unliked -->
             <input type="checkbox" id="heart-{{ .ID }}" name="favourite" value="true" {{ if .IsFavourite }}checked{{ end
                 }} onchange="this.form.submit()" />
