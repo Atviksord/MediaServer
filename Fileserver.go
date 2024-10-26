@@ -78,50 +78,54 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 		trueData.User.Username = user.Username
 
 		if datapoint.MediaType == "video" {
-			favourite := false
-
 			videoPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(videoPath)
-			// SQL query to check if following media
-			d, err := cfg.db.GetFavouritedMedia(context.Background(), database.GetFavouritedMediaParams{UserID: user.ID, MediaID: datapoint.ID})
+			favourite, err := cfg.favouriteChecker(user, datapoint)
 			if err != nil {
-				fmt.Println("Error receiving favourited media")
+				fmt.Println("Couldnt get favourites", err)
 			}
-			if d == 1 {
-				favourite = true
-
-			}
-
-			trueData.Videos = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: int(datapoint.ID), IsFavourite: favourite})
-
+			trueData.Videos = append(trueData.Videos, MediaItem{
+				Title:       datapoint.MediaName,
+				FilePath:    encodedPath,
+				Format:      strings.TrimPrefix(datapoint.Format, "."),
+				ID:          int(datapoint.ID),
+				IsFavourite: favourite})
 		}
 		if datapoint.MediaType == "image" {
+			favourite, err := cfg.favouriteChecker(user, datapoint)
+			if err != nil {
+				fmt.Println("Couldnt get favourites", err)
+			}
 
 			imagePath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(imagePath)
-			trueData.Images = append(trueData.Images, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, ID: int(datapoint.ID)})
+			trueData.Images = append(trueData.Images, MediaItem{
+				Title:       datapoint.MediaName,
+				FilePath:    encodedPath,
+				ID:          int(datapoint.ID),
+				IsFavourite: favourite})
 
 		}
 		if datapoint.MediaType == "audio" {
-			favourite := false
-			// SQL query to check if following media
-			d, err := cfg.db.GetFavouritedMedia(context.Background(), database.GetFavouritedMediaParams{UserID: user.ID, MediaID: datapoint.ID})
+			favourite, err := cfg.favouriteChecker(user, datapoint)
 			if err != nil {
-				fmt.Println("Error receiving favourited media")
-			}
-			if d == 1 {
-				favourite = true
-
+				fmt.Println("Couldnt get favourites", err)
 			}
 
 			audioPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(audioPath)
 
-			trueData.Audios = append(trueData.Videos, MediaItem{Title: datapoint.MediaName, FilePath: encodedPath, Format: strings.TrimPrefix(datapoint.Format, "."), ID: int(datapoint.ID), IsFavourite: favourite})
+			trueData.Audios = append(trueData.Audios, MediaItem{
+				Title:       datapoint.MediaName,
+				FilePath:    encodedPath,
+				Format:      strings.TrimPrefix(datapoint.Format, "."),
+				ID:          int(datapoint.ID),
+				IsFavourite: favourite})
 
 		}
 
 	}
+
 	return trueData, nil
 
 }
@@ -141,5 +145,21 @@ func (cfg *apiconfig) searchedTemplateInjector(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Error rendering data template", http.StatusInternalServerError)
 		fmt.Println(err)
 	}
+
+}
+
+func (cfg *apiconfig) favouriteChecker(user database.User, datapoint database.Medium) (bool, error) {
+	favourite := false
+	// SQL query to check if following media
+	d, err := cfg.db.GetFavouritedMedia(context.Background(), database.GetFavouritedMediaParams{UserID: user.ID, MediaID: datapoint.ID})
+	if err != nil {
+		fmt.Println("Error receiving favourited media")
+		return favourite, err
+	}
+	if d == 1 {
+		favourite = true
+
+	}
+	return favourite, nil
 
 }

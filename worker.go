@@ -46,7 +46,7 @@ func (cfg *apiconfig) directoryWatcherWorker(dirPath string) {
 				fileType = "image"
 			case ".mp4", ".avi", ".mov":
 				fileType = "video"
-			case ".mp3", ".wav":
+			case ".mp3", ".wav", ".m4a":
 				fileType = "audio"
 			}
 
