@@ -118,5 +118,6 @@ func (cfg *apiconfig) handlerRegistry(mux *http.ServeMux) {
 	mux.HandleFunc("POST /logout", cfg.authWrapper(cfg.logoutHandler))
 	mux.HandleFunc("POST /search", cfg.authWrapper(cfg.searchHandler))
 	mux.HandleFunc("POST /togglefavourite", cfg.authWrapper(cfg.togglefavourite))
+	mux.HandleFunc("GET /favouritelist", cfg.authWrapper(cfg.favouriteListHandler))
 
 }

@@ -72,6 +72,7 @@ func (cfg *apiconfig) sqlMediaGetter(user database.User) (PageData, error) {
 // Arranges a media slice from SQL queries into PageData structs
 func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database.User) (PageData, error) {
 	trueData := PageData{}
+	trimmedText := ""
 
 	for _, datapoint := range allMedia {
 
@@ -84,8 +85,14 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 			if err != nil {
 				fmt.Println("Couldnt get favourites", err)
 			}
+			if len(datapoint.MediaName) > 40 {
+				trimmedText = datapoint.MediaName[:40]
+			} else {
+				trimmedText = datapoint.MediaName
+			}
+
 			trueData.Videos = append(trueData.Videos, MediaItem{
-				Title:       datapoint.MediaName,
+				Title:       trimmedText,
 				FilePath:    encodedPath,
 				Format:      strings.TrimPrefix(datapoint.Format, "."),
 				ID:          int(datapoint.ID),
@@ -96,11 +103,15 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 			if err != nil {
 				fmt.Println("Couldnt get favourites", err)
 			}
-
+			if len(datapoint.MediaName) > 40 {
+				trimmedText = datapoint.MediaName[:40]
+			} else {
+				trimmedText = datapoint.MediaName
+			}
 			imagePath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(imagePath)
 			trueData.Images = append(trueData.Images, MediaItem{
-				Title:       datapoint.MediaName,
+				Title:       trimmedText,
 				FilePath:    encodedPath,
 				ID:          int(datapoint.ID),
 				IsFavourite: favourite})
@@ -111,12 +122,17 @@ func (cfg *apiconfig) pageDataArranger(allMedia []database.Medium, user database
 			if err != nil {
 				fmt.Println("Couldnt get favourites", err)
 			}
+			if len(datapoint.MediaName) > 40 {
+				trimmedText = datapoint.MediaName[:40]
+			} else {
+				trimmedText = datapoint.MediaName
+			}
 
 			audioPath := strings.TrimPrefix(datapoint.FilePath, "static")
 			encodedPath := url.PathEscape(audioPath)
 
 			trueData.Audios = append(trueData.Audios, MediaItem{
-				Title:       datapoint.MediaName,
+				Title:       trimmedText,
 				FilePath:    encodedPath,
 				Format:      strings.TrimPrefix(datapoint.Format, "."),
 				ID:          int(datapoint.ID),
@@ -161,5 +177,18 @@ func (cfg *apiconfig) favouriteChecker(user database.User, datapoint database.Me
 
 	}
 	return favourite, nil
+
+}
+
+func (cfg *apiconfig) favouriteServer(user database.User) PageData {
+	d, err := cfg.db.GetAllFavouriteMedia(context.Background(), user.ID)
+	if err != nil {
+		fmt.Println("Error couldnt get all favourite media", err)
+	}
+	trueData, err := cfg.pageDataArranger(d, user)
+	if err != nil {
+		fmt.Println("Didnt manage to arrange favourite media in pageDArranger", err)
+	}
+	return trueData
 
 }

@@ -38,3 +38,10 @@ func (cfg *apiconfig) togglefavourite(w http.ResponseWriter, r *http.Request, us
 
 	}
 }
+func (cfg *apiconfig) favouriteListHandler(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	if r.Method == "GET" {
+		trueData := cfg.favouriteServer(user)
+		cfg.searchedTemplateInjector(w, r, user, trueData)
+	}
+}

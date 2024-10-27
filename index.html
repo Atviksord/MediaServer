@@ -23,7 +23,7 @@
         <p>動画を選びなさい！.</p>
         <form>
             <button type="submit" formaction="/" formmethod="post">Main</button>
-            <button type="submit" form="/Favourites" formmethod="post">Favourites</button>
+            <button type="submit" formaction="/favouritelist" formmethod="get">Favourites</button>
         </form>
         <div class="media">
             {{ template "imageTemplate.html" . }}
