@@ -51,6 +51,7 @@ func main() {
 	cfg.handlerRegistry(mux)
 	log.Printf("Server is starting on port %s\n", IP+":"+PORT)
 	go cfg.directoryWatcherWorker("./static/Media")
+	go cfg.junkDeleter("./static/Media")
 	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
