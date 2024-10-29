@@ -1,5 +1,6 @@
 package main
 
+// Ideas for improvement TODO: Signups also hash passwords before writing to DB and retrieval functions will unhash to match
 import (
 	"bytes"
 	"fmt"
@@ -44,4 +45,9 @@ func (cfg *apiconfig) signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+}
+
+func (cfg *apiconfig) passwordHasher(username, password string) (string, string) {
+
+	return "", ""
 }
