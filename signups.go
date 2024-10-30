@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Atviksord/MediaServer/internal/database"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (cfg *apiconfig) signupHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,12 +29,15 @@ func (cfg *apiconfig) signupHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
+		// hash the password
+		truePass := cfg.passwordHasher(password)
+
 		// Check DB for match IF NOT EXIST create user in DB and automatically LOG IN (jwt creation, also hash password etc)
 		_, err = cfg.db.GetUser(r.Context(), username)
 		if err != nil {
 			cfg.db.CreateUser(r.Context(), database.CreateUserParams{
 				Username:  username,
-				Password:  password,
+				Password:  string(truePass),
 				CreatedAt: time.Now().UTC(),
 				UpdatedAt: time.Now().UTC()})
 
@@ -47,7 +51,10 @@ func (cfg *apiconfig) signupHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (cfg *apiconfig) passwordHasher(username, password string) (string, string) {
-
-	return "", ""
+func (cfg *apiconfig) passwordHasher(password string) []byte {
+	encryptedPass, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		fmt.Println("Unable to hash pass")
+	}
+	return encryptedPass
 }
