@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/Atviksord/MediaServer/internal/database"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,27 +29,47 @@ func (cfg *apiconfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		// Check DB for match, if match serve index. (make JWT etc for auth endpoints)
-		user, err := cfg.db.Login(r.Context(), database.LoginParams{
-			Username: username,
-			Password: password})
+		firstUser, err := cfg.db.GetUser(r.Context(), username)
 		if err != nil {
-			fmt.Println("No such user or password")
+			fmt.Println("No such username", err)
 			http.ServeFile(w, r, "./static/login.html")
 			return
 		}
-		refreshToken, err := cfg.generateRandomToken()
-		if err != nil {
-			fmt.Println("Could not generate random token")
+
+		err = bcrypt.CompareHashAndPassword([]byte(firstUser.Password), []byte(password))
+		if err == nil {
+			user, err := cfg.db.Login(r.Context(), database.LoginParams{
+				Username: username,
+				Password: firstUser.Password})
+			if err != nil {
+				fmt.Println("No such user or password")
+				http.ServeFile(w, r, "./static/login.html")
+				return
+			}
+			refreshToken, err := cfg.generateRandomToken()
+			if err != nil {
+				fmt.Println("Could not generate random token")
+				http.ServeFile(w, r, "./static/login.html")
+				return
+
+			}
+			_, err = cfg.db.AddAccessToken(r.Context(), database.AddAccessTokenParams{
+				Username:     username,
+				Refreshtoken: sql.NullString{String: refreshToken, Valid: true}})
+			if err != nil {
+				fmt.Printf("Error generating random access token %v", err)
+				http.ServeFile(w, r, "./static/login.html")
+				return
+			}
+			cfg.cookieFactory(w, refreshToken)
+			cfg.templateInjector(w, r, user)
+			return
+
+		} else {
+			fmt.Println("No such user or wrong password")
+			http.ServeFile(w, r, "./static/login.html")
+			return
 		}
-		_, err = cfg.db.AddAccessToken(r.Context(), database.AddAccessTokenParams{
-			Username:     username,
-			Refreshtoken: sql.NullString{String: refreshToken, Valid: true}})
-		if err != nil {
-			fmt.Printf("Error generating random access token %v", err)
-		}
-		cfg.cookieFactory(w, refreshToken)
-		cfg.templateInjector(w, r, user)
 
 	}
 
